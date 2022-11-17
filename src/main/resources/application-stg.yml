@@ -1,0 +1,13 @@
+spring:
+  cloud:
+    gcp:
+      project-id: demo-project-g88
+      sql:
+        enabled: true
+        instance-connection-name: demo-project-g88:europe-west4:backend-csql-i
+  datasource:
+    username: backend
+    password: ${sm://projects/demo-project-g88/secrets/backend-csql-i-backend-csql-u}
+  flyway:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}

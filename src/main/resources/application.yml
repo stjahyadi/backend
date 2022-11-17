@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/backend
+    username: backend
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    placeholder-replacement: false
+    schemas: public
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+  jackson:
+    default-property-inclusion: NON_NULL

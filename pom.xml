@@ -10,12 +10,16 @@
 	</parent>
 	<groupId>com.seanyoung</groupId>
 	<artifactId>backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${revision}</version>
 	<name>backend</name>
 	<description>Backend project for Spring Boot</description>
 	<properties>
+        <revision>development-SNAPSHOT</revision>
 		<java.version>17</java.version>
 		<kotlin.version>1.6.21</kotlin.version>
+        <gantsign-ktlint-plugin.version>1.15.2</gantsign-ktlint-plugin.version>
+        <detekt-plugin.version>1.21.0</detekt-plugin.version>
+        <kotlin-logging-jvm.version>3.0.4</kotlin-logging-jvm.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -34,6 +38,11 @@
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-stdlib-jdk8</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>io.github.microutils</groupId>
+            <artifactId>kotlin-logging-jvm</artifactId>
+            <version>${kotlin-logging-jvm.version}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -80,7 +89,96 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+            <!-- Add ktlint plugin - code formatting for kotlin -->
+            <plugin>
+                <groupId>com.github.gantsign.maven</groupId>
+                <artifactId>ktlint-maven-plugin</artifactId>
+                <version>${gantsign-ktlint-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <experimental>true</experimental>
+                </configuration>
+            </plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+                <!-- Add detekt plugin - static code analyzer for kotlin -->
+				<plugin>
+					<groupId>com.github.ozsie</groupId>
+					<artifactId>detekt-maven-plugin</artifactId>
+					<version>${detekt-plugin.version}</version>
+					<configuration>
+						<baseline>detekt-ignore.xml</baseline>
+						<buildUponDefaultConfig>true</buildUponDefaultConfig>
+						<config>detekt-config.yml</config>
+						<report>xml:${project.build.directory}/reports/detekt.xml</report>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
-
+    <profiles>
+        <profile>
+            <id>local</id>
+            <activation>
+                <property>
+                    <!-- Prevent activation when running on Gitlab CI servers. -->
+                    <name>!env.CI</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <!-- PostgreSQL image -->
+                                    <name>postgres:14-alpine</name>
+                                    <run>
+                                        <env>
+                                            <POSTGRES_DB>backend</POSTGRES_DB>
+                                            <POSTGRES_USER>backend</POSTGRES_USER>
+                                            <POSTGRES_HOST_AUTH_METHOD>trust</POSTGRES_HOST_AUTH_METHOD>
+                                        </env>
+                                        <ports>
+                                            <port>5432:5432</port>
+                                        </ports>
+                                        <wait>
+                                            <log>database system is ready to accept connections</log>
+                                        </wait>
+                                    </run>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>start</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>stop</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
