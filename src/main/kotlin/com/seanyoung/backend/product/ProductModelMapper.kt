@@ -11,7 +11,7 @@ fun Product.mapToEntity(creationTimestamp: Instant, modificationTimestamp: Insta
         qty = this.qty,
         price = this.price,
         imageUrl = this.imageUrl,
-        creationTimetamp = creationTimestamp,
+        creationTimestamp = creationTimestamp,
         modificationTimestamp = modificationTimestamp
     )
 }

@@ -15,6 +15,6 @@ class ProductEntity(
     val qty: Long,
     val price: BigDecimal,
     val imageUrl: String?,
-    val creationTimetamp: Instant,
+    val creationTimestamp: Instant,
     val modificationTimestamp: Instant?
 ) : IdentifiableEntity

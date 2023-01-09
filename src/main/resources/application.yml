@@ -14,3 +14,7 @@ spring:
     user: ${spring.datasource.username}
   jackson:
     default-property-inclusion: NON_NULL
+
+#logging:
+#  level:
+#    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: ERROR

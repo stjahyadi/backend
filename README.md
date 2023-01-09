@@ -53,8 +53,9 @@ In certain situations, we might need to deploy a hotfix from the commit that is 
 7. The CI/CD pipeline that will start should have `deploy-to-stg` and `deploy-to-pro` manual jobs.
 
 ### Tasks
-1. Create CRUD from API to database. Check the table is not created
+1. Create CRUD from API to database - DONE
 2. Create PubSub with Emulator
 3. Create public API
-4. Create cache for public API
+4. Create distributed cache for public API
 5. Build CICD
+6. Wrap the exception
